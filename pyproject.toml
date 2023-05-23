@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "qaguru-18-dkudriavtseva"
+version = "0.1.0"
+description = ""
+authors = ["Daria Kudriavtseva <situation96@mail.ru>"]
+readme = "README.md"
+packages = [{include = "qaguru_18_dkudriavtseva"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pytest = "7.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
