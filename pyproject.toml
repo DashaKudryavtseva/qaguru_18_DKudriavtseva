@@ -9,6 +9,9 @@ packages = [{include = "qaguru_18_dkudriavtseva"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 pytest = "7.3.1"
+requests = "^2.31.0"
+voluptuous = "^0.13.1"
+pytest-voluptuous = "^1.2.0"
 
 
 [build-system]
