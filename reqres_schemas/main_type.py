@@ -2,14 +2,11 @@ from voluptuous import Schema, PREVENT_EXTRA
 
 
 class ReqresSchema:
-    base_url: str
     single_schema: Schema({})
     list_schema: Schema({})
     support: Schema({})
 
     def __init__(self, data: Schema({})):
-        self.base_url = 'https://reqres.in/api/'
-
         self.support = Schema(
             {"url": str, "text": str}, extra=PREVENT_EXTRA, required=True
         )
@@ -35,10 +32,10 @@ class ReqresSchema:
 
 
 class ReqresSchemaUser:
-    user_schema: Schema({})
+    user: Schema({})
 
     def __init__(self):
-        self.user_schema = Schema(
+        self.user = Schema(
             {
                 "id": int,
                 "email": str,
@@ -52,16 +49,11 @@ class ReqresSchemaUser:
 
 
 class ReqresSchemaColor:
-    color_schema: Schema({})
+    color: Schema({})
 
     def __init__(self):
-        self.color_schema = Schema(
-            {
-                'name': str,
-                'job': str,
-                'id': str,
-                'createdAt': str,
-            },
+        self.color = Schema(
+            {"id": int, "name": str, "year": int, "color": str, "pantone_value": str},
             extra=PREVENT_EXTRA,
             required=True,
         )

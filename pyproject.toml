@@ -1,3 +1,13 @@
+[tool.pytest.ini_options]
+addopts="-s -v"
+markers=[
+    "get: for test with GET request to API",
+    "post: for test with POST request to API",
+    "put: for test with PUT request to API",
+    "patch: for test with PATCH request to API",
+    "delete: for test with DELETE request to API"
+]
+
 [tool.poetry]
 name = "qaguru-18-dkudriavtseva"
 version = "0.1.0"
