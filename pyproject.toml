@@ -1,6 +1,8 @@
 [tool.pytest.ini_options]
-addopts="-s -v"
-markers=[
+log_cli = 1
+log_level = "INFO"
+addopts = "-s -v --clean-alluredir --alluredir=allure-results --allure-no-capture"
+markers = [
     "get: for test with GET request to API",
     "post: for test with POST request to API",
     "put: for test with PUT request to API",
@@ -22,6 +24,9 @@ pytest = "7.3.1"
 requests = "^2.31.0"
 voluptuous = "^0.13.1"
 pytest-voluptuous = "^1.2.0"
+allure-pytest = "^2.13.2"
+curlify = "^2.2.1"
+selene = "2.0.0rc2"
 
 
 [build-system]

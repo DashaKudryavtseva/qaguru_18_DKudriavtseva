@@ -2,6 +2,8 @@ from voluptuous import Schema, PREVENT_EXTRA
 
 
 class ReqresSchema:
+    '''Описание общего вида Schema для запросов на https://reqres.in/'''
+
     single_schema: Schema({})
     list_schema: Schema({})
     support: Schema({})
@@ -32,6 +34,8 @@ class ReqresSchema:
 
 
 class ReqresSchemaUser:
+    '''Описание Schema для объекта user'''
+
     user: Schema({})
 
     def __init__(self):
@@ -49,6 +53,8 @@ class ReqresSchemaUser:
 
 
 class ReqresSchemaColor:
+    '''Описание Schema для объекта color'''
+
     color: Schema({})
 
     def __init__(self):

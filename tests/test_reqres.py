@@ -1,7 +1,8 @@
+'''Модуль с тестами на API запросы на форму https://reqres.in/'''
 from datetime import datetime
 
+import allure
 import pytest
-import requests
 from pytest_voluptuous import S
 
 from reqres_schemas.employees import EmployeeSchema
@@ -16,17 +17,17 @@ from reqres_schemas.registers import RegisterSchema
 
 @pytest.mark.get
 @pytest.mark.parametrize("path_part", ["users", "unknown"])
-def test_get_list(presets, path_part):
+def test_get_list(reqres, path_part):
+    '''Успешное получение списка объектов с помощью запроса GET.
+    Тип объекта определяется параметризацией'''
     if path_part == 'users':
         user = ReqresSchemaUser()
         reqres_s = ReqresSchema(data=user.user)
-        url = f'{presets}{path_part}?page=2'
+        responce = reqres.get(f'{path_part}?page=2')
     elif path_part == 'unknown':
         color = ReqresSchemaColor()
         reqres_s = ReqresSchema(data=color.color)
-        url = f'{presets}{path_part}'
-
-    responce = requests.get(url)
+        responce = reqres.get(f'{path_part}')
 
     assert responce.status_code == 200
     assert S(reqres_s.list_schema) == responce.json()
@@ -35,7 +36,9 @@ def test_get_list(presets, path_part):
 
 @pytest.mark.get
 @pytest.mark.parametrize("path_part", ["users", "unknown"])
-def test_get_single(presets, path_part):
+def test_get_single(reqres, path_part):
+    '''Успешное получение одного объекта с помощью запроса GET.
+    Тип объекта определяется параметризацией'''
     if path_part == 'users':
         user = ReqresSchemaUser()
         reqres_s = ReqresSchema(data=user.user)
@@ -43,8 +46,7 @@ def test_get_single(presets, path_part):
         color = ReqresSchemaColor()
         reqres_s = ReqresSchema(data=color.color)
 
-    url = f'{presets}{path_part}/2'
-    responce = requests.get(url)
+    responce = reqres.get(f'{path_part}/2')
 
     assert responce.status_code == 200
     assert S(reqres_s.single_schema) == responce.json()
@@ -52,20 +54,20 @@ def test_get_single(presets, path_part):
 
 @pytest.mark.get
 @pytest.mark.parametrize("path_part", ["users", "unknown"])
-def test_get_single_not_found(presets, path_part):
-    url = f'{presets}{path_part}/23'
-
-    responce = requests.get(url)
+def test_get_single_not_found(reqres, path_part):
+    '''Получение ошибки при попытке получить несуществующий
+    объект с помощью запроса GET. Тип объекта определяется параметризацией'''
+    responce = reqres.get(f'{path_part}/23')
 
     assert responce.status_code == 404
 
 
 @pytest.mark.post
-def test_post(presets):
-    url = f'{presets}users'
+def test_post(reqres):
+    '''Успешная отправка запроса на создание пользователя - POST'''
     employee = {"name": "morpheus", "job": "leader"}
 
-    responce = requests.post(url, employee)
+    responce = reqres.post('users', employee)
     responce_object = EmployeeSchema()
 
     assert responce.status_code == 201
@@ -78,11 +80,11 @@ def test_post(presets):
 
 
 @pytest.mark.put
-def test_put(presets):
-    url = f'{presets}users/2'
+def test_put(reqres):
+    '''Успешная отправка запроса на изменение данных пользователя - PUT'''
     employee = {"name": "morpheus", "job": "zion resident"}
 
-    responce = requests.put(url, employee)
+    responce = reqres.put('users/2', employee)
     responce_object = EmployeeSchema()
 
     assert responce.status_code == 200
@@ -95,11 +97,11 @@ def test_put(presets):
 
 
 @pytest.mark.patch
-def test_patch(presets):
-    url = f'{presets}users/2'
+def test_patch(reqres):
+    '''Успешная отправка запроса на частичное изменение данных пользователя - PATCH'''
     employee = {"name": "morpheus", "job": "zion resident"}
 
-    responce = requests.patch(url, employee)
+    responce = reqres.patch('users/2', employee)
     responce_object = EmployeeSchema()
 
     assert responce.status_code == 200
@@ -112,24 +114,23 @@ def test_patch(presets):
 
 
 @pytest.mark.delete
-def test_delete(presets):
-    url = f'{presets}users/2'
-
-    responce = requests.delete(url)
+def test_delete(reqres):
+    '''Успешная отправка запроса на удаление пользователя - DELETE'''
+    responce = reqres.delete('users/2')
 
     assert responce.status_code == 204
 
 
 @pytest.mark.post
 @pytest.mark.parametrize("path_part", ["register", "login"])
-def test_register_or_login_sucsessful(presets, path_part):
-    url = f'{presets}{path_part}'
+def test_register_or_login_sucsessful(reqres, path_part):
+    '''Проверка успешности регистрации пользователя/входа в систему'''
     if path_part == 'register':
         register_data = {"email": "eve.holt@reqres.in", "password": "pistol"}
     elif path_part == 'login':
         register_data = {"email": "eve.holt@reqres.in", "password": "cityslicka"}
 
-    responce = requests.post(url, register_data)
+    responce = reqres.post(path_part, register_data)
     responce_object = RegisterSchema()
 
     assert responce.status_code == 200
@@ -138,14 +139,14 @@ def test_register_or_login_sucsessful(presets, path_part):
 
 @pytest.mark.post
 @pytest.mark.parametrize("path_part", ["register", "login"])
-def test_register_or_login_unsucsessful(presets, path_part):
-    url = f'{presets}{path_part}'
+def test_register_or_login_unsucsessful(reqres, path_part):
+    '''Проверка получения ошибки при неверной регистрации/входа в систему'''
     if path_part == 'register':
         register_data = {"email": "sydney@fife"}
     elif path_part == 'login':
         register_data = {"email": "peter@klaven"}
 
-    responce = requests.post(url, register_data)
+    responce = reqres.post(path_part, register_data)
 
     assert responce.status_code == 400
     assert responce.json()['error'] == "Missing password"
